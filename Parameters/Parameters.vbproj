@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Parameters</RootNamespace>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Authors>Paulo Borges</Authors>
+    <Company>PBTools</Company>
+  </PropertyGroup>
+
+</Project>

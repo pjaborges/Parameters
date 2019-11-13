@@ -1,11 +1,10 @@
 ﻿Public MustInherit Class Parameter
-    Implements IParameter
 
-    Protected mToken As String
-    Protected mIsVisible As Boolean
-    Protected mIsMandatory As Boolean
+    Public ReadOnly Token As String
+    Public ReadOnly IsVisible As Boolean
+    Public ReadOnly IsMandatory As Boolean
+    Public ReadOnly Description As String
     Protected mAcceptValues As String()
-    Protected mDescription As String
 
 #Region "Constructors"
     ''' <summary>
@@ -14,15 +13,14 @@
     ''' <param name="token">The token that defines the parameter. It should use the prefix '-'.</param>
     ''' <param name="isVisible">A boolean that states if the parameter is visible to the user.</param>
     ''' <param name="isMandatory">A boolean to state if the parameter requires a mandatory input from the user.</param>
-    ''' <param name="validValues">Array with accepted values to this parameter.</param>
     ''' <param name="descrip">A description of the parameter.</param>
+    ''' <param name="validValues">Array with accepted values to this parameter.</param>
     ''' <remarks></remarks>
-    Public Sub New(token As String, _
-                   isVisible As Boolean, _
-                   IsMandatory As Boolean, _
-                   validValues() As String, _
-                   descrip As String)
-
+    Public Sub New(token As String,
+                   isVisible As Boolean,
+                   IsMandatory As Boolean,
+                   descrip As String,
+                   validValues() As String)
         Try
             If String.IsNullOrEmpty(token) OrElse String.IsNullOrWhiteSpace(token) Then
                 Throw New ArgumentNullException("token")
@@ -36,11 +34,11 @@
                 Throw New ArgumentNullException("description")
             End If
 
-            mToken = token
-            mIsVisible = isVisible
-            mIsMandatory = IsMandatory
+            Me.Token = token
+            Me.IsVisible = isVisible
+            Me.IsMandatory = IsMandatory
+            Me.Description = descrip
             mAcceptValues = validValues
-            mDescription = descrip
         Catch ex As Exception
             Throw New Exception(ex.Message)
         End Try
@@ -48,40 +46,22 @@
 #End Region
 
 #Region "Properties"
-    Public ReadOnly Property Token As String Implements IParameter.Token
-        Get
-            Return mToken
-        End Get
-    End Property
-
-    Public ReadOnly Property IsVisible As Boolean Implements IParameter.IsVisible
-        Get
-            Return mIsVisible
-        End Get
-    End Property
-
-    Public ReadOnly Property IsMandatory As Boolean Implements IParameter.IsMandatory
-        Get
-            Return mIsMandatory
-        End Get
-    End Property
-
-    Public ReadOnly Property AcceptValues As String() Implements IParameter.AcceptValues
+    Public ReadOnly Property AcceptValues As String() 'Implements IParameter.AcceptValues
         Get
             Return mAcceptValues
         End Get
     End Property
 
-    Public MustOverride ReadOnly Property DefaultValue As Object Implements IParameter.DefaultValue
+    Public MustOverride ReadOnly Property DefaultValue As Object 'Implements IParameter.DefaultValue
 
-    Public MustOverride Property Value As Object Implements IParameter.Value
+    Public MustOverride Property Value As Object 'Implements IParameter.Value
 #End Region
 
 #Region "Methods"
-    Public Overridable Function Validate() As Boolean Implements IParameter.Validate
+    Public Overridable Function Validate() As Boolean
 
         If mAcceptValues IsNot Nothing AndAlso Not mAcceptValues.Contains(Value.ToString.ToLower) Then
-            Throw New ArgumentException(String.Format(msg2, mToken, Value))
+            Throw New ArgumentException(String.Format(msg2, Token, Value))
         Else
             Return True
         End If
@@ -89,7 +69,34 @@
     End Function
 
     Public Overrides Function ToString() As String
-        Return String.Format("{0} | {1} | {2} | {3}", mToken, DefaultValue, Value, mDescription)
+        Dim sb As New Text.StringBuilder
+
+        If Description.Length > 40 Then
+            Dim temp() As String = Description.Split(" "c, StringSplitOptions.RemoveEmptyEntries)
+            Dim l As Integer
+            Dim count As Integer
+            Dim s As String = ""
+            For i = 0 To temp.Length - 1
+                If l + temp(i).Length <= 40 Then
+                    s &= temp(i) + " "
+                    l += temp(i).Length + 1
+                Else
+                    i -= 1
+                    l = 0
+                    If count = 0 Then
+                        sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", Token, DefaultValue, s))
+                        count += 1
+                    Else
+                        sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", "", "", s))
+                    End If
+                    s = ""
+                End If
+            Next
+            If s <> "" Then sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", "", "", s))
+        Else
+            sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", Token, DefaultValue, Description))
+        End If
+        Return sb.ToString
     End Function
 #End Region
 

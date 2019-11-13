@@ -11,22 +11,16 @@
     ''' <param name="token">The token that defines the parameter. It should use the prefix '-'.</param>
     ''' <param name="IsVisible">A boolean that states if the parameter is visible to the user.</param>
     ''' <param name="IsMandatory">A boolean to state if the parameter requires a mandatory input from the user.</param>
-    ''' <param name="dftValue">The default value.</param>
     ''' <param name="descrip">A description of the parameter.</param>
+    ''' <param name="dftValue">The default value.</param>
     ''' <remarks></remarks>
-    Public Sub New(token As String, _
-                   isVisible As Boolean, _
-                   IsMandatory As Boolean, _
-                   Optional dftValue As Boolean = False, _
-                   Optional descrip As String = Nothing)
+    Public Sub New(token As String,
+                   isVisible As Boolean,
+                   IsMandatory As Boolean,
+                   descrip As String,
+                   Optional dftValue As Boolean = False)
 
-        MyBase.New(token, isVisible, IsMandatory, Nothing, descrip)
-        'Set the accept values to this parameter.
-        'If validValues IsNot Nothing Then
-        '    mAcceptValues = {"true", "t", "1", "false", "f", "0"}.Union(validValues).ToArray
-        'Else
-        '    mAcceptValues = {"true", "t", "1", "false", "f", "0"}
-        'End If
+        MyBase.New(token, isVisible, IsMandatory, descrip, Nothing)
         mDefault = dftValue
         mValue = dftValue
 

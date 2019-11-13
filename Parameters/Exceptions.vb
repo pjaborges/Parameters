@@ -6,8 +6,8 @@
     Public Const msg4 As String = "[Error4] Parameter: {0} File extention: {1} - Not valid!"
     Public Const msg5 As String = "[Error5] Parameter: {0} File: {1} - Not exists!"
     Public Const msg6 As String = "[Error6] Parameter: {0} - is mandatory and it is missing!"
-    Public Const msg7 As String = "[Warning1] Parameter: {0} - Defined multiple times!"
-    Public Const msg8 As String = "[Warning2] Value: {0} - Defined without assigned parameter token!"
-    Public Const msg9 As String = "[Warning3] Parameter: {0} - Not recognized!"
+    Public Const msg7 As String = "[Error7] Parameter: {0} - Defined multiple times!"
+    Public Const msg8 As String = "[Error8] Value: {0} - Unknown token!"
+    Public Const msg9 As String = "[Error9] Parameter: {0} - Not recognized!"
 
 End Module

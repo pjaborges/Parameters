@@ -1,7 +1,6 @@
 ﻿Public Class DBParameter
-    'Inherits Dictionary(Of String, IParameter)
 
-    Protected mData As Dictionary(Of String, IParameter)
+    Protected mData As Dictionary(Of String, Parameter)
 
 #Region "Constructors"
     ''' <summary>
@@ -9,12 +8,12 @@
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub New()
-        mData = New Dictionary(Of String, IParameter)
+        mData = New Dictionary(Of String, Parameter)
     End Sub
 #End Region
 
 #Region "Properties"
-    Default Public ReadOnly Property Item(token As String) As IParameter
+    Default Public ReadOnly Property Item(token As String) As Parameter
         Get
             Return mData(token)
         End Get
@@ -27,25 +26,10 @@
     ''' </summary>
     ''' <param name="prm">The parameter to add.</param>
     ''' <remarks></remarks>
-    Public Sub Add(prm As IParameter)
+    Public Sub Add(prm As Parameter)
 
         If prm IsNot Nothing Then
             mData.Add(prm.Token, prm)
-        End If
-
-    End Sub
-
-    ''' <summary>
-    ''' Adds a collection of parameters
-    ''' </summary>
-    ''' <param name="params">The parameters to add.</param>
-    ''' <remarks></remarks>
-    Public Sub Add(params As ICollection(Of IParameter))
-
-        If params IsNot Nothing AndAlso params.Count > 0 Then
-            For Each prm In params
-                Add(prm)
-            Next
         End If
 
     End Sub
@@ -178,8 +162,15 @@
     End Function
 
     Public Overrides Function ToString() As String
-        'TODO: return a string with all the visible parameters and respective description
-        Return MyBase.ToString()
+        Dim sb As New Text.StringBuilder
+        sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", "Token", "Dflt. Value", "Description"))
+        sb.AppendLine()
+        For Each p In mData.Values
+            If p.IsVisible Then
+                sb.AppendLine(p.ToString)
+            End If
+        Next
+        Return sb.ToString
     End Function
 #End Region
 

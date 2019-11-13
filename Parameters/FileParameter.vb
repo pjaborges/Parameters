@@ -1,7 +1,7 @@
 ﻿Public Class FileParameter
     Inherits StringParameter
 
-    Protected mShouldExist As Boolean
+    Public ReadOnly ShouldExist As Boolean
     Protected mValidExtentions As String()
     Protected mAppend As Boolean
 
@@ -18,17 +18,17 @@
     ''' <param name="append">A boolean to state if the log appends data to the file.</param>
     ''' <param name="descrip">A description of the parameter.</param>
     ''' <remarks></remarks>
-    Public Sub New(token As String, _
-                   isVisible As Boolean, _
-                   isMandatory As Boolean, _
-                   Optional shouldExist As Boolean = False, _
-                   Optional validExt As String() = Nothing, _
-                   Optional dftValue As String = Nothing, _
-                   Optional append As Boolean = False, _
-                   Optional descrip As String = Nothing)
+    Public Sub New(token As String,
+                   isVisible As Boolean,
+                   isMandatory As Boolean,
+                   descrip As String,
+                   ShouldExist As Boolean,
+                   Optional validExt As String() = Nothing,
+                   Optional dftValue As String = Nothing,
+                   Optional append As Boolean = False)
 
-        MyBase.New(token, isVisible, isMandatory, dftValue, Nothing, descrip)
-        mShouldExist = shouldExist
+        MyBase.New(token, isVisible, isMandatory, descrip, dftValue, Nothing)
+        Me.ShouldExist = ShouldExist
         If validExt IsNot Nothing Then
             For i = 0 To validExt.Count - 1
                 validExt(i) = validExt(i).ToLower
@@ -39,20 +39,6 @@
     End Sub
 #End Region
 
-#Region "Properties"
-    ''' <summary>
-    ''' Gets the file should exists.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public ReadOnly Property ShouldExist As Boolean
-        Get
-            Return mShouldExist
-        End Get
-    End Property
-#End Region
-
 #Region "Methods"
     Public Overrides Function Validate() As Boolean
 
@@ -61,7 +47,6 @@
         If retValue Then
 
             If ShouldExist AndAlso Not IO.File.Exists(mValue) Then
-                'Throw New Exception(String.Format(msg5, mToken, mValue))
                 retValue = False
             End If
 
@@ -71,7 +56,6 @@
                     mValue &= mValidExtentions(0)
                 ElseIf Not mValidExtentions.Contains(ext) Then
                     retValue = False
-                    'Throw New Exception(String.Format(msg4, mToken, ext))
                 End If
             End If
 

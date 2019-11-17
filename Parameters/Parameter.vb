@@ -1,10 +1,9 @@
-﻿Public MustInherit Class Parameter
+﻿Public Class Parameter
 
     Public ReadOnly Token As String
     Public ReadOnly IsVisible As Boolean
-    Public ReadOnly IsMandatory As Boolean
     Public ReadOnly Description As String
-    Protected mAcceptValues As String()
+    Private ReadOnly Data As IParameter
 
 #Region "Constructors"
     ''' <summary>
@@ -12,15 +11,13 @@
     ''' </summary>
     ''' <param name="token">The token that defines the parameter. It should use the prefix '-'.</param>
     ''' <param name="isVisible">A boolean that states if the parameter is visible to the user.</param>
-    ''' <param name="isMandatory">A boolean to state if the parameter requires a mandatory input from the user.</param>
     ''' <param name="descrip">A description of the parameter.</param>
-    ''' <param name="validValues">Array with accepted values to this parameter.</param>
+    ''' <param name="data">Array with accepted values to this parameter.</param>
     ''' <remarks></remarks>
     Public Sub New(token As String,
                    isVisible As Boolean,
-                   IsMandatory As Boolean,
                    descrip As String,
-                   validValues() As String)
+                   data As IParameter)
         Try
             If String.IsNullOrEmpty(token) OrElse String.IsNullOrWhiteSpace(token) Then
                 Throw New ArgumentNullException("token")
@@ -29,16 +26,16 @@
                 'Throw New ArgumentException("The value do not start with '-'.", "token")
             ElseIf token.Split().Length > 1 Then
                 token = String.Join("", token.Split)
-                'Throw New ArgumentException("There are white spaces in the token.", "token")
             ElseIf String.IsNullOrEmpty(descrip) OrElse String.IsNullOrWhiteSpace(descrip) Then
                 Throw New ArgumentNullException("description")
+            ElseIf data Is Nothing Then
+                Throw New ArgumentNullException("data")
             End If
 
             Me.Token = token
             Me.IsVisible = isVisible
-            Me.IsMandatory = IsMandatory
-            Me.Description = descrip
-            mAcceptValues = validValues
+            Description = descrip
+            Me.Data = data
         Catch ex As Exception
             Throw New Exception(ex.Message)
         End Try
@@ -46,26 +43,32 @@
 #End Region
 
 #Region "Properties"
-    Public ReadOnly Property AcceptValues As String() 'Implements IParameter.AcceptValues
+    Public ReadOnly Property IsMandatory As Boolean
         Get
-            Return mAcceptValues
+            Return Data.IsMandatory
         End Get
     End Property
 
-    Public MustOverride ReadOnly Property DefaultValue As Object 'Implements IParameter.DefaultValue
+    Public Property Value As Object
+        Get
+            Return Data.Value
+        End Get
+        Set(value As Object)
+            Data.Value = value
+        End Set
+    End Property
 
-    Public MustOverride Property Value As Object 'Implements IParameter.Value
+    Public ReadOnly Property NameType As String
+        Get
+            Return Data.GetType().Name
+        End Get
+    End Property
+
 #End Region
 
 #Region "Methods"
-    Public Overridable Function Validate() As Boolean
-
-        If mAcceptValues IsNot Nothing AndAlso Not mAcceptValues.Contains(Value.ToString.ToLower) Then
-            Throw New ArgumentException(String.Format(msg2, Token, Value))
-        Else
-            Return True
-        End If
-
+    Public Function Validate() As Boolean
+        Return Data.Validate
     End Function
 
     Public Overrides Function ToString() As String
@@ -84,7 +87,7 @@
                     i -= 1
                     l = 0
                     If count = 0 Then
-                        sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", Token, DefaultValue, s))
+                        sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", Token, Data.DefaultValue, s))
                         count += 1
                     Else
                         sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", "", "", s))
@@ -94,7 +97,7 @@
             Next
             If s <> "" Then sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", "", "", s))
         Else
-            sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", Token, DefaultValue, Description))
+            sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", Token, Data.DefaultValue, Description))
         End If
         Return sb.ToString
     End Function

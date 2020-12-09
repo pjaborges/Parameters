@@ -15,7 +15,7 @@
                    dftValue As Int64,
                    value As Int64,
                    Optional acceptVls() As Int64 = Nothing,
-                   Optional rangeVls() As Int64 = Nothing)
+                   Optional rangeVls As Tuple(Of Int64, Int64) = Nothing)
 
         MyBase.New(isMandatory, dftValue, value, acceptVls, rangeVls)
     End Sub
@@ -25,9 +25,9 @@
     Public Overrides Function Validate() As Boolean
         If AcceptValues Is Nothing AndAlso RangeValues Is Nothing Then
             Return True
-        ElseIf AcceptValues IsNot Nothing AndAlso AcceptValues.Contains(Value) Then
+        ElseIf AcceptValues IsNot Nothing AndAlso AcceptValues.Contains(CLng(Value)) Then
             Return True
-        ElseIf RangeValues IsNot Nothing AndAlso Value >= RangeValues(0) AndAlso Value <= RangeValues(1) Then
+        ElseIf RangeValues IsNot Nothing AndAlso CLng(Value) >= RangeValues.Item1 AndAlso CLng(Value) <= RangeValues.Item2 Then
             Return True
         End If
         Return False

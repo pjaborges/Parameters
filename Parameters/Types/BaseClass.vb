@@ -5,7 +5,7 @@
     Protected mValue As T
     Protected mIsMandatory As Boolean
     Protected ReadOnly AcceptValues() As T
-    Protected ReadOnly RangeValues() As T
+    Protected ReadOnly RangeValues As Tuple(Of T, T)
 
 #Region "Constructors"
     ''' <summary>
@@ -21,7 +21,7 @@
                    dftValue As T,
                    value As T,
                    Optional acceptVls() As T = Nothing,
-                   Optional rangeVls() As T = Nothing)
+                   Optional rangeVls As Tuple(Of T, T) = Nothing)
 
         mIsMandatory = isMandatory
         mDefaultValue = dftValue

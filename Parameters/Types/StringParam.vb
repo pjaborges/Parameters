@@ -21,10 +21,10 @@
 
 #Region "Methods"
     Public Overrides Function Validate() As Boolean
-        If IsMandatory AndAlso (String.IsNullOrEmpty(Value) OrElse String.IsNullOrWhiteSpace(Value)) Then
+        If IsMandatory AndAlso (String.IsNullOrEmpty(CStr(Value)) OrElse String.IsNullOrWhiteSpace(CStr(Value))) Then
             Return False
         End If
-        If AcceptValues IsNot Nothing AndAlso AcceptValues.Contains(Value) Then
+        If AcceptValues IsNot Nothing AndAlso AcceptValues.Contains(CStr(Value)) Then
             Return True
         End If
         Return True

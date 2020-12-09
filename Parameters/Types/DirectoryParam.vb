@@ -24,7 +24,7 @@
 
 #Region "Methods"
     Public Overrides Function Validate() As Boolean
-        If MyBase.Validate AndAlso ShouldExist AndAlso IO.Directory.Exists(Value) Then
+        If MyBase.Validate AndAlso ShouldExist AndAlso IO.Directory.Exists(CStr(Value)) Then
             Return True
         End If
         Return False

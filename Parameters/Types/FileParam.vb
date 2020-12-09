@@ -43,17 +43,21 @@
 
         If retValue Then
 
-            If ShouldExist AndAlso Not IO.File.Exists(Value) Then
+            If ShouldExist AndAlso Not IO.File.Exists(CStr(Value)) Then
                 retValue = False
             End If
 
-            If ValidExtentions IsNot Nothing Then
-                Dim ext = IO.Path.GetExtension(Value).ToLower
-                If String.IsNullOrEmpty(ext) OrElse String.IsNullOrWhiteSpace(ext) Then
-                    mValue &= ValidExtentions(0)
-                ElseIf Not ValidExtentions.Contains(ext) Then
-                    retValue = False
+            If CStr(Value) <> "" Then
+                If ValidExtentions IsNot Nothing Then
+                    Dim ext = IO.Path.GetExtension(CStr(Value)).ToLower
+                    If String.IsNullOrEmpty(ext) OrElse String.IsNullOrWhiteSpace(ext) Then
+                        mValue &= ValidExtentions(0)
+                    ElseIf Not ValidExtentions.Contains(ext) Then
+                        retValue = False
+                    End If
                 End If
+            Else
+                retValue = True
             End If
 
         End If

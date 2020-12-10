@@ -14,7 +14,7 @@
                    validExt() As String,
                    Optional append As Boolean = False)
 
-        MyBase.New(False, False, dftValue, value, validExt, Nothing, append)
+        MyBase.New(False, False, dftValue, value, validExt, False, Nothing, append)
     End Sub
 #End Region
 

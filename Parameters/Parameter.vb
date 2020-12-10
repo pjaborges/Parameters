@@ -12,7 +12,7 @@
     ''' <param name="token">The token that defines the parameter. It should use the prefix '-'.</param>
     ''' <param name="isVisible">A boolean that states if the parameter is visible to the user.</param>
     ''' <param name="descrip">A description of the parameter.</param>
-    ''' <param name="data">Array with accepted values to this parameter.</param>
+    ''' <param name="data"></param>
     ''' <remarks></remarks>
     Public Sub New(token As String,
                    isVisible As Boolean,
@@ -23,9 +23,8 @@
                 Throw New ArgumentNullException("token")
             ElseIf Not token.StartsWith("-") Then
                 token = String.Join("-", token.Split())
-                'Throw New ArgumentException("The value do not start with '-'.", "token")
             ElseIf token.Split().Length > 1 Then
-                token = String.Join("", token.Split)
+                token = String.Join("", token.Split())
             ElseIf String.IsNullOrEmpty(descrip) OrElse String.IsNullOrWhiteSpace(descrip) Then
                 Throw New ArgumentNullException("description")
             ElseIf data Is Nothing Then
@@ -99,7 +98,7 @@
         Else
             sb.AppendLine(String.Format("{0,10} | {1,11} | {2}", Token, Data.DefaultValue, Description))
         End If
-        Return sb.ToString
+        Return sb.ToString()
     End Function
 #End Region
 

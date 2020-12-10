@@ -23,14 +23,19 @@
 
 #Region "Methods"
     Public Overrides Function Validate() As Boolean
-        If AcceptValues Is Nothing AndAlso RangeValues Is Nothing Then
-            Return True
-        ElseIf AcceptValues IsNot Nothing AndAlso AcceptValues.Contains(CLng(Value)) Then
-            Return True
-        ElseIf RangeValues IsNot Nothing AndAlso CLng(Value) >= RangeValues.Item1 AndAlso CLng(Value) <= RangeValues.Item2 Then
-            Return True
+        If AcceptValues Is Nothing AndAlso RangeValues Is Nothing Then Return True
+
+        Dim vl As Int64 = CLng(Value)
+
+        If AcceptValues IsNot Nothing Then
+            If Not AcceptValues.Contains(vl) Then Return False
         End If
-        Return False
+
+        If RangeValues IsNot Nothing Then
+            If vl < RangeValues.Item1 OrElse vl > RangeValues.Item2 Then Return False
+        End If
+
+        Return True
     End Function
 #End Region
 

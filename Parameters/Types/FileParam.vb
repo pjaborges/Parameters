@@ -3,6 +3,7 @@
 
     Public ReadOnly ShouldExist As Boolean
     Protected ValidExtentions() As String
+    Protected ReadOnly IsCompressed As Boolean
     Protected mAppend As Boolean
 
 #Region "Constructors"
@@ -14,6 +15,7 @@
     ''' <param name="dftValue">The default value.</param>
     ''' <param name="value">The value.</param>
     ''' <param name="validExt">The valid extentions for this parameter.</param>
+    ''' <param name="isCompressed">A boolean to state if the file is compressed.</param>
     ''' <param name="append">A boolean to state if the log appends data to the file.</param>
     ''' <remarks></remarks>
     Public Sub New(isMandatory As Boolean,
@@ -21,6 +23,7 @@
                    dftValue As String,
                    value As String,
                    validExt() As String,
+                   Optional isCompressed As Boolean = False,
                    Optional acceptVls() As String = Nothing,
                    Optional append As Boolean = False)
 
@@ -32,6 +35,7 @@
             Next
         End If
         ValidExtentions = validExt
+        Me.IsCompressed = isCompressed
         mAppend = append
     End Sub
 #End Region
@@ -39,25 +43,32 @@
 #Region "Methods"
     Public Overrides Function Validate() As Boolean
 
-        Dim retValue As Boolean = MyBase.Validate
+        Dim retValue As Boolean
+
+        'test the condition of accepted values in the higher class
+        retValue = MyBase.Validate()
 
         If retValue Then
 
-            If ShouldExist AndAlso Not IO.File.Exists(CStr(Value)) Then
-                retValue = False
-            End If
+            Dim vl As String = CStr(Value)
 
-            If CStr(Value) <> "" Then
-                If ValidExtentions IsNot Nothing Then
-                    Dim ext = IO.Path.GetExtension(CStr(Value)).ToLower
-                    If String.IsNullOrEmpty(ext) OrElse String.IsNullOrWhiteSpace(ext) Then
-                        mValue &= ValidExtentions(0)
-                    ElseIf Not ValidExtentions.Contains(ext) Then
-                        retValue = False
-                    End If
+            If ShouldExist AndAlso Not IO.File.Exists(vl) Then Return False
+
+            If ValidExtentions IsNot Nothing Then
+                Dim ext As String
+                If IsCompressed Then
+                    Dim noExt As String = IO.Path.GetFileNameWithoutExtension(vl) 'no compressed extension
+                    ext = IO.Path.GetExtension(noExt)
+                Else
+                    ext = IO.Path.GetExtension(vl).ToLower
                 End If
-            Else
-                retValue = True
+
+                If String.IsNullOrEmpty(ext) OrElse String.IsNullOrWhiteSpace(ext) Then
+                    mValue &= ValidExtentions(0)
+                Else
+                    If Not ValidExtentions.Contains(ext) Then Return False
+                End If
+
             End If
 
         End If

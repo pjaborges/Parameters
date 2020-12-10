@@ -24,10 +24,16 @@
 
 #Region "Methods"
     Public Overrides Function Validate() As Boolean
-        If MyBase.Validate AndAlso ShouldExist AndAlso IO.Directory.Exists(CStr(Value)) Then
-            Return True
+
+        Dim retValue As Boolean
+
+        retValue = MyBase.Validate()
+
+        If retValue Then
+            If ShouldExist AndAlso IO.Directory.Exists(CStr(Value)) Then Return True
         End If
-        Return False
+
+        Return retValue
     End Function
 #End Region
 

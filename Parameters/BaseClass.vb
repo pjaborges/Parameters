@@ -1,9 +1,9 @@
 ﻿Public MustInherit Class BaseClass(Of T)
     Implements IParameter
 
-    Protected mDefaultValue As T
-    Protected mValue As T
     Protected mIsMandatory As Boolean
+    Protected mDefault As T
+    Protected mValue As T
     Protected ReadOnly AcceptValues() As T
     Protected ReadOnly RangeValues As Tuple(Of T, T)
 
@@ -24,8 +24,12 @@
                    Optional rangeVls As Tuple(Of T, T) = Nothing)
 
         mIsMandatory = isMandatory
-        mDefaultValue = dftValue
-        mValue = value
+        mDefault = dftValue
+        If value Is Nothing Then
+            mValue = mDefault
+        Else
+            mValue = value
+        End If
         AcceptValues = acceptVls
         RangeValues = rangeVls
     End Sub
@@ -40,13 +44,13 @@
 
     Public ReadOnly Property DefaultValue As Object Implements IParameter.DefaultValue
         Get
-            Return mDefaultValue
+            Return mDefault
         End Get
     End Property
 
     Public Property Value As Object Implements IParameter.Value
         Get
-            Return CType(mValue, T)
+            Return mValue
         End Get
         Set(value As Object)
             mValue = CType(value, T)
